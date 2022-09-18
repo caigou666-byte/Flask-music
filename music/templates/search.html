@@ -1,0 +1,45 @@
+<div class="input-group">
+    <input class="input_" id="search" name="Email" placeholder="Enter keywords here" autocomplete="off">
+    <button class="button--submit"  href="javascript:void(0);"
+    onclick="search()">Search</button>
+</div>
+
+<style>
+/* From uiverse.io by @alexruix */
+.input-group {
+  display: flex;
+  align-items: center;
+}
+
+.input_ {
+  min-height: 50px;
+  max-width: 150px;
+  padding: 0 1rem;
+  color: rgb(0, 0, 0);
+  font-size: 15px;
+  border: 5px solid #0071e2;
+  border-radius: 6px 0 0 6px;
+  background-color: transparent;
+}
+
+.button--submit {
+  min-height: 50px;
+  padding: 21px 18px 21px 18px;
+  border: none;
+  border-radius: 0 6px 6px 0;
+  background-color: #0071e2;
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color .3s ease-in-out;
+}
+
+.button--submit:hover {
+  background-color: #689cfa;
+}
+
+.input_:focus, .input:focus-visible {
+  border-color: #689cfa;
+  outline: none;
+}
+</style>

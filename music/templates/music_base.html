@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MusicBox</title>
+    <link rel="stylesheet" type="text/css" href="./static/css/style.css">
+    <script src="static/js/jquery.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <!-- 第一层 -->
+        <div class="wrapper">
+            <div class="logo_wrapper">
+                MusicBox
+            </div>
+            <div class="button_wrapper666">
+                <button class="login" href="javascript:void(0);"
+                    onclick="PearsonDataWebRefresh('/pearsonData')">PersonalData</button>
+                <button class="register" onclick="window.location.href='/logout'">LogOut</button>
+            </div>
+
+        </div>
+        <!-- 第一层 -->
+        <!-- 第二层 -->
+        <div class="hero_section">
+            <div class="text">
+                Get
+                <b
+                    style="background-image: linear-gradient(90deg,#6a11cb 0,#2575fc);-webkit-background-clip: text;-webkit-text-fill-color: transparent;">Songs
+                    and Albums</b>
+                selected <br>according to the artist and music type you are listening to.
+            </div>
+            <!-- <div class="button_wrapper">
+                <button></button>
+            </div> -->
+        </div>
+        <!-- 第二层 -->
+        <!-- 中间部分 -->
+        <div class="homepage">
+            <div class="navigation-cards">
+                <div class="navigation-section">
+                    <div class="sticky_wrapper">
+                        <nav class="navigation-categories">
+                            <a class="tab" href="javascript:void(0);" onclick="GETInWebRefresh('/musicHall')">Music
+                                Hall</a>
+                            <a class="tab" href="javascript:void(0);" onclick="GETInWebRefresh('/myCollection')">My
+                                Collection</a>
+                            <!-- <a class="tab" href="javascript:void(0);" onclick="GETInWebRefresh('/user/recentplay')">Recent Plays</a> -->
+                            <a class="tab" href="javascript:void(0);" onclick="SearchWebRefresh('/search')">Search</a>
+                        </nav>
+                    </div>
+                </div>
+
+
+                <!-- <iframe src=''></iframe> -->
+
+                <div class="abc_">
+                    <div id="abc_" class="ab"> </div>
+                    <div class="cards-container">
+                        {% block card %}
+
+                        {% endblock %}
+
+                    </div>
+                </div>
+
+                <div class="div1">
+                </div>
+            </div>
+        </div>
+        <!-- 中间部分 -->
+        <div class="dl_Banner_container">
+            <button class="play_" href="javascript:void(0);" onclick="PlayButton_clicked()">Play</button>
+
+            <div class="barbg">
+                <div class="currtime">CurrentTime</div>
+                <div class="TotalTime">TotalTime</div>
+                <div class="player-music-title">是你</div>
+                <img class="player-music-img"></img>
+                <div class="rdy">
+                    <div class="cur">
+                        <div class="btn_">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <audio id="audioPlayer" ontimeupdate="updata()">
+        <source src="">
+        </source>
+    </audio>
+</body>
+<script>
+    window.onload = function () {
+        $(this).css("border", "5px solid #0071e2");
+        $(".div1").hide();
+    }
+    // 
+    $('.tab').on('click', function () {
+        // console.log("123")
+        $('.tab').css("border", "5px solid white");
+        $(this).css("border", "5px solid #0071e2");
+    });
+    var status = 0;
+    $('.btn_').mousedown(function () {
+        status = 1;
+    })
+    $('body').mouseup(function () {
+        status = 0;
+    })
+    $('body').mousemove(function (e) {
+        // console.log(e.pageX,e.pageY)
+        if (status == 1) {
+            if (e.pageX - $('.cur').offset().left <= 450) {
+                var width_ = e.pageX - $('.cur').offset().left
+                $('.cur').css("width", width_)
+                var audio = $('#audioPlayer')[0]
+                audio.currentTime = (parseInt((width_ / 450) * audio.duration))
+            }
+        }
+    })
+    function musicPlay(name, src, pic_src) {
+        $('#audioPlayer').attr("src", src)
+        $('#audioPlayer')[0].play()
+        $('.player-music-title').text(name)
+        $('.player-music-img').attr("src", pic_src)
+        $('.play_').text("Pause")
+        console.log(pic_src)
+    }
+    var vid = document.getElementById("audioPlayer");
+    vid.onerror = function () {
+        alert("Playback failed")
+    };
+    function updata() {
+        var audio = $('#audioPlayer')[0];
+        // console.log(audio.currentTime,"进度",(audio.currentTime/audio.duration)*100);//控制台显示
+        $('.cur').css("width", 450 * (audio.currentTime / audio.duration))
+        $('.currtime').text("CurrentTime:" + parseInt(audio.currentTime) + "s")
+        $('.TotalTime').text("TotalTime:" + parseInt(audio.duration) + "s")
+        if (audio.duration > 0 && !audio.paused) {
+            $('.player-music-img').css("animation", "rotate 6s linear infinite")
+        } else {
+            $('.player-music-img').css("animation", "")
+        }
+    }
+    function PlayButton_clicked() {
+        var audio = $('#audioPlayer')[0];
+        if (audio.duration > 0 && !audio.paused) {
+            audio.pause()
+            $('.play_').text("Play")
+        } else {
+            audio.play()
+            $('.play_').text("Pause")
+        }
+    }
+    function collect(ID, music_ID, obj) {//查询歌曲是否收藏
+        var a = $(obj).attr("class");
+        $.ajax({
+            type: "POST",
+            url: "/user/like",
+            data: "username=" + ID + "&music_ID_=" + music_ID,
+            success: function (data) {
+                // $(".cards-container").html(data);
+                if (data === "1") {
+                    $.ajax({ type: "POST", url: "/user/like", data: "username=" + ID + "&music_ID_=" + music_ID + "&status=unlike" });
+                    var a = $(obj);
+                    a.removeClass("emoji-icon-collect-clicked")
+
+                } else if (data === "0") {
+                    $.ajax({ type: "POST", url: "/user/like", data: "username=" + ID + "&music_ID_=" + music_ID + "&status=like" });
+                    var a = $(obj);
+                    a.addClass("emoji-icon-collect-clicked")
+
+                }
+            },
+            error: function () {
+                alert("Faild!")
+            }
+        });
+    }
+    function GETInWebRefresh(url) {
+        $(".abc_").show()
+        $("#abc_").hide()
+        $(".div1").hide()
+        $(".cards-container").show()
+        $.ajax({
+            type: "GET",
+            url: url,
+            dataType: "html",
+            success: function (data) {
+                $(".cards-container").html(data);
+            },
+            error: function () {
+                $(".cards-container").html("Data Acquisition Failed！");
+            }
+        });
+    }
+    function SearchWebRefresh(url) {
+        $(".abc_").show()
+        $("#abc_").show()
+        $(".div1").hide()
+        $(".cards-container").show()
+        $.ajax({
+            type: "GET",
+            url: "search_input",
+            dataType: "html",
+            success: function (data) {
+                $("#abc_").html(data);
+
+            },
+            error: function () {
+                $(".cards-container").html("Data Acquisition Failed！");
+            }
+        });
+    }
+    function search(text) {
+        
+        console.log("KeyWord_=" + $("#search").val().toString())
+        $.ajax({
+            type: "POST",
+            url: "search",
+            data: "KeyWord_=" + $("#search").val().toString(),
+            success: function (data) {
+                $(".cards-container").html(data);
+            },
+            error: function () {
+                $(".cards-container").html("Data Acquisition Failed！");
+            }
+        });
+    }
+    function PearsonDataWebRefresh(url) {
+        $("#abc_").hide()
+        $(".abc_").hide()
+        $(".cards-container").hide()
+        $(".div1").show()
+        $.ajax({
+            type: "GET",
+            url: url,
+            dataType: "html",
+            success: function (data) {
+                $(".div1").html(data);
+            },
+            error: function () {
+                $(".div1").html("Data Acquisition Failed！");
+            }
+        });
+    }
+    // function recentPlayWebRefresh
+</script>
+
+</html>

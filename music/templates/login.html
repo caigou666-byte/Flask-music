@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+  <script src="http://lib.h-ui.net/jquery.form/3.51.0/jquery.form.min.js"></script>
+  <script type="text/javascript" src="./static/js/Mtils.min.js"></script>
+</head>
+<body>
+  <div id="dialog" style="display: none;">
+    <div class="border" id="app">
+      <span class="message ProgressiveElements" id="title"></span>
+      <span class="FullText ProgressiveElements" id="context"></span>
+      <div style="display: flex; flex-direction: row; margin: 250px 18px 10px 18px">
+        <button class="cta-btn2 ProgressiveElements" onclick='$("#dialog").hide()'>
+          OK
+        </button>
+      </div>
+    </div>
+  </div>
+  <form action="/login" method="post" id="frm-reg" name="frm-reg">
+    <div class="div-style">
+      <h1 class="login">MusicBox UserLogin</h1>
+      <h2 class="a">UserName or Email</h2>
+      <input class="input-text" placeholder="Enter one user name or email" name="username">
+      <h2 class="a">Password</h2>
+      <input class="input-text" type="password" placeholder="Please input password" name="password">
+
+      <div calss="button-array">
+        <input onclick="window.location.href = '/register' " target="blank" class="cta-btn" type="button"
+          value="Register"></input>
+
+        <input type="button" value="SignIn" class="cta-btn" id="sub"></input>
+      </div>
+  </form>
+</body>
+<style type="text/CSS">
+  .button-array{
+    display: block;
+  }
+  .div-style {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        /*margin: 50px;*/
+        padding: 0px;
+        /**/
+        font-family: Avenir, Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-align: center;
+        color: #2c3e50;
+        padding: 0;
+        margin: 0;
+        /* 盒子模型 */
+        box-sizing: border-box;
+        /**/
+        /* 弹性布局 让页面元素垂直+水平居中 */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /* 让页面始终占浏览器可视区域总高度 */
+        height: 100vh;
+        /* 背景渐变色 */
+        background: linear-gradient(#80d5ec, #b1e1f7);
+    }
+.a{
+    margin: 15px 10px 15px -180px;
+}
+.input-text {
+  background-color: #fff;
+  color: #1fb393;
+  width: max-content;
+
+  border-radius: 10px;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 20px;
+  align-items: center;
+  text-align: center;
+  padding: 12px 25px 12px 25px;
+  color: rgb(0, 0, 0);
+  letter-spacing: 1px;
+  border: 2px solid #ffffff;
+  outline-color: #3478f6;
+  /* outline-width: 5px; */
+  display: inline-block;
+  cursor: pointer;
+}
+.cta-btn,
+.file_up {
+    background-color: #3478f6;
+  border-radius: 10px;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 18px;
+  /* line-height: 20px; */
+  align-items: center;
+  text-align: center;
+  /* text-transform: uppercase; */
+  padding: 12px 55px 12px 55px;
+  margin: 50px 10px 0px 0px;
+  color: rgb(255, 255, 255);
+  letter-spacing: 1px;
+  display: inline-block;
+  transition-duration: 1s;
+  cursor: pointer;
+  transition-property: letter-spacing,background-color;
+  letter-spacing: 2px; 
+
+}
+
+.cta-btn:hover:not([disabled]),
+.file_up:hover {
+  background-color: #6a9dfb;
+  color: rgb(255, 255, 255);
+  /* letter-spacing: 2px; */
+}
+
+.cta-btn:disabled {
+  cursor: not-allowed;
+  background: linear-gradient(to top, #ddd, #eee);
+  opacity: 0.75;
+  color: #aaa;
+}
+.FullText {
+    text-align: center;
+    position: absolute;
+    font-family: "Times New Roman", Geneva, Arial, Helvetica, sans-serif;
+    font-size: 25px;
+    top: 40%;
+    color: #3f414b;
+    padding: 10px 15px 10px 15px;
+    /* background-color: #8fd9ef78; */
+    border-radius: 0px;
+  }
+  #dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.4);
+    width: 100%;
+    height: 100%;
+  }
+  .ProgressiveElements {
+    /*渐显动画，用于按钮、文本*/
+    animation: GraduallyAppear 0.8s;
+    -webkit-animation-fill-mode: forwards;
+    -moz-animation-fill-mode: forwards;
+    -ms-animation-fill-mode: forwards;
+    -o-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+  }
+  
+  .message {
+    text-align: center;
+    position: absolute;
+    font-family: "Times New Roman", Geneva, Arial, Helvetica, sans-serif;
+    font-size: 50px;
+    top: 10%;
+    color: #3f414b;
+    padding: 10px 18px 10px 18px;
+    background-color: #8fd9ef9c;
+    /* border-radius: 15px; */
+    /* box-shadow: 0 8px 20px -4px rgba(69, 67, 67, 0.658); */
+  
+  }
+  .cta-btn2 {
+    text-align: center;
+    position: absolute;
+    font-family: "Times New Roman", Geneva, Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    bottom: 10%;
+    left: 43%;
+    /* color: #3f414b; */
+    padding: 10px 18px 10px 18px;
+    background-color: #8fd9ef9c;
+    cursor: pointer;
+    /* border-radius: 15px; */
+    /* box-shadow: 0 8px 20px -4px rgba(69, 67, 67, 0.658); */
+  
+  }
+  .closeImg {
+    width: 20px;
+    height: 20px;
+    float: right;
+    margin-right: 5px;
+    margin-top: 5px;
+    cursor: pointer;
+  
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+  .border {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    margin: 30px auto 10px auto;
+    width: 70px;
+    height: 70px;
+    background-color: #8fd9ef;
+    border-radius: 50%;
+    font-size: 11px;
+    justify-content: center;
+    align-items: center;
+    animation: mymove 0.4s;
+    -webkit-animation-fill-mode: forwards;
+    -moz-animation-fill-mode: forwards;
+    -ms-animation-fill-mode: forwards;
+    -o-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+  
+  }
+  @keyframes mymove {
+    100% {
+      width: 400px;
+      height: 250px;
+      border-radius: 35px;
+      background-color: #ffffff;
+      z-index: 99999;
+    }
+  }
+  @keyframes GraduallyAppear {
+    0% {
+      opacity: 0;
+    }
+  
+    100% {
+      opacity: 1;
+    }
+  }
+</style>
+<script>
+  window.onload = function () {
+    $("#dialog").hide()
+  }
+  var re = /select|update|delete|exec|count|'|"|=|;|>|<|%/i;
+  $("#sub").click(function () {
+    if ($('input[name=username]').val() == "") {
+      $("#title").text("Error")
+      $("#context").text("Please enter the account number")
+      $("#dialog").show()
+    } else if($('input[name=password]').val() == ""){
+      $("#title").text("Error")
+      $("#context").text("Please input a password")
+      $("#dialog").show()
+    }else if($('input[name=username]').val().toString().length<6 ){
+      $("#title").text("Error")
+      $("#context").text("Account number is too short(No less than 6 digits)")
+      $("#dialog").show()
+    }else if($('input[name=password]').val().toString().length<6 ){
+      $("#title").text("Error")
+      $("#context").text("Password is too short(No less than 6 digits)")
+      $("#dialog").show()
+    }else if (re.test($('input[name=username]').val())){
+      $("#title").text("Error")
+          $("#context").text("Do not enter special characters and SQL statements")
+          $("#dialog").show()
+    }else if (re.test($('input[name=password]').val())){
+      $("#title").text("Error")
+          $("#context").text("Do not enter special characters and SQL statements")
+          $("#dialog").show()
+    }
+    else{
+      var tmp=Mtils.security.hex_sha256($('input[name=password]').val())
+      $('input[name=password]').val(tmp)
+        $("#frm-reg").ajaxSubmit(function (data) {
+          // console.log(data.result)
+          if(data.toString()=="UserDoesNotExist"){
+          $("#title").text("Error")
+          $("#context").text("User Does Not Exist")
+          $("#dialog").show()
+          }else if(data.toString()=="LoginSucceeded"){
+            window.location.href = '/music'
+          }else if(data.toString()=="PasswordError"){
+            $("#title").text("Error")
+          $("#context").text("Password Error")
+          $("#dialog").show()
+            
+          }else{
+            $("#title").text("Error")
+          $("#context").text("Server Error")
+          $("#dialog").show()
+          }
+
+      });
+    }
+
+  });
+
+
+</script>
+
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-cn"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>MusicBox</title>
+	<link href="./static/css/site.min.css" rel="stylesheet">
+	<link href="./static/css/oneui.css" rel="stylesheet">
+	    <style type="text/css">
+#tagcloud {
+	position: relative;
+	width: 50%;
+	min-width: 270px;
+	height: 300px;
+	margin: 20px auto 0;
+	/* padding-bottom: 100px; */
+}
+#tagcloud a {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	font-family: Microsoft YaHei;
+	color: #FFFFFF;
+	font-weight: bold;
+	text-decoration: none;
+	padding: 3px 6px;
+}
+#tagcloud a:hover {
+    border: 1px solid #eee;
+    background: #0323f6;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+}
+#tagcloud a:hover {
+	color: #ffffff;
+	letter-spacing: 2px;
+}
+</style>
+<script type="text/javascript">
+	var radius = 120; var dtr = Math.PI / 180; var d = 300; var mcList = []; var active = false; var lasta = 1; var lastb = 1; var distr = true; var tspeed = 10; var size = 250; var mouseX = 0; var mouseY = 0; var howElliptical = 1; var aA = null; var oDiv = null; window.onload = function () {
+		var i = 0; var oTag = null; oDiv = document.getElementById('tagcloud'); aA = oDiv.getElementsByTagName('a'); for (i = 0; i < aA.length; i++) { oTag = {}; oTag.offsetWidth = aA[i].offsetWidth; oTag.offsetHeight = aA[i].offsetHeight; mcList.push(oTag); }
+		sineCosine(0, 0, 0); positionAll(); oDiv.onmouseover = function () { active = true; }; oDiv.onmouseout = function () { active = false; }; oDiv.onmousemove = function (ev) { var oEvent = window.event || ev; mouseX = oEvent.clientX - (oDiv.offsetLeft + oDiv.offsetWidth / 2); mouseY = oEvent.clientY - (oDiv.offsetTop + oDiv.offsetHeight / 2); mouseX /= 5; mouseY /= 5; }; setInterval(update, 30);
+	}; function update() {
+		var a; var b; if (active) {
+			a = (-Math.min(Math.max(-mouseY, -size), size) / radius) * tspeed;
+			b = (Math.min(Math.max(-mouseX, -size), size) / radius) * tspeed;
+		}
+		else { a = lasta * 0.98; b = lastb * 0.98; }
+		lasta = a; lastb = b; if (Math.abs(a) <= 0.01 && Math.abs(b) <= 0.01) { return; }
+		var c = 0; sineCosine(a, b, c); for (var j = 0; j < mcList.length; j++) { var rx1 = mcList[j].cx; var ry1 = mcList[j].cy * ca + mcList[j].cz * (-sa); var rz1 = mcList[j].cy * sa + mcList[j].cz * ca; var rx2 = rx1 * cb + rz1 * sb; var ry2 = ry1; var rz2 = rx1 * (-sb) + rz1 * cb; var rx3 = rx2 * cc + ry2 * (-sc); var ry3 = rx2 * sc + ry2 * cc; var rz3 = rz2; mcList[j].cx = rx3; mcList[j].cy = ry3; mcList[j].cz = rz3; per = d / (d + rz3); mcList[j].x = (howElliptical * rx3 * per) - (howElliptical * 2); mcList[j].y = ry3 * per; mcList[j].scale = per; mcList[j].alpha = per; mcList[j].alpha = (mcList[j].alpha - 0.6) * (10 / 6); }
+		doPosition(); depthSort();
+	}
+	function depthSort() {
+		var i = 0; var aTmp = []; for (i = 0; i < aA.length; i++) { aTmp.push(aA[i]); }
+		aTmp.sort
+			(function (vItem1, vItem2) {
+				if (vItem1.cz > vItem2.cz) { return -1; }
+				else if (vItem1.cz < vItem2.cz) { return 1; }
+				else { return 0; }
+			}); for (i = 0; i < aTmp.length; i++) { aTmp[i].style.zIndex = i; }
+	}
+	function positionAll() {
+		var phi = 0; var theta = 0; var max = mcList.length; var i = 0; var aTmp = []; var oFragment = document.createDocumentFragment(); for (i = 0; i < aA.length; i++) { aTmp.push(aA[i]); }
+		aTmp.sort
+			(function () { return Math.random() < 0.5 ? 1 : -1; }); for (i = 0; i < aTmp.length; i++) { oFragment.appendChild(aTmp[i]); }
+		oDiv.appendChild(oFragment); for (var i = 1; i < max + 1; i++) {
+			if (distr) {
+				phi = Math.acos(-1 + (2 * i - 1) / max);
+				theta = Math.sqrt(max * Math.PI) * phi;
+			}
+			else { phi = Math.random() * (Math.PI); theta = Math.random() * (2 * Math.PI); }
+			mcList[i - 1].cx = radius * Math.cos(theta) * Math.sin(phi); mcList[i - 1].cy = radius * Math.sin(theta) * Math.sin(phi); mcList[i - 1].cz = radius * Math.cos(phi); aA[i - 1].style.left = mcList[i - 1].cx + oDiv.offsetWidth / 2 - mcList[i - 1].offsetWidth / 2 + 'px'; aA[i - 1].style.top = mcList[i - 1].cy + oDiv.offsetHeight / 2 - mcList[i - 1].offsetHeight / 2 + 'px';
+		}
+	}
+	function doPosition() {
+		var l = oDiv.offsetWidth / 2; var t = oDiv.offsetHeight / 2; for (var i = 0; i < mcList.length; i++) { aA[i].style.left = mcList[i].cx + l - mcList[i].offsetWidth / 2 + 'px'; aA[i].style.top = mcList[i].cy + t - mcList[i].offsetHeight / 2 + 'px'; aA[i].style.fontSize = Math.ceil(12 * mcList[i].scale / 2) + 8 + 'px'; aA[i].style.filter = "alpha(opacity=" + 100 * mcList[i].alpha + ")"; aA[i].style.opacity = mcList[i].alpha; }
+	}
+	function sineCosine(a, b, c) { sa = Math.sin(a * dtr); ca = Math.cos(a * dtr); sb = Math.sin(b * dtr); cb = Math.cos(b * dtr); sc = Math.sin(c * dtr); cc = Math.cos(c * dtr); }
+</script>
+
+<body>
+	<div class="site-header">
+		<nav class="nav_jsxs">
+			</nav>
+		<div class="box-text">
+			<h1> MusicBox</h1>
+			<h1>Discover New Music Anytime</h1>
+			<p>Welcom<br>
+			</p>
+			<p>Get songs and albums selected according to the artist and music type you are listening to.</p>
+			
+			<h1 style="font-size:30px;font-weight: 600;color:aqua;cursor: pointer;"  onclick="window.location.href = '/music'"  target="_blank">Click to enter the Music Box<h1>
+			<div id="tagcloud">
+	
+				<a   title=" " target="_blank"
+					style="left: 314.159px; top: 168.514px; font-size: 13px; opacity: 0.212714; z-index: 0;">Tiktok hot</a><a
+					  title="  " target="_blank"
+					style="left: 255.036px; top: 105.601px; font-size: 13px; opacity: 0.20817; z-index: 1;">Popular comments</a><a
+					  title=" " target="_blank"
+					style="left: 361.467px; top: 85.939px; font-size: 13px; opacity: 0.230526; z-index: 2;">梁静茹</a><a
+					  title=" " target="_blank"
+					style="left: 388.757px; top: 143.131px; font-size: 13px; opacity: 0.283306; z-index: 3;">周杰伦</a><a
+					  title=" " target="_blank"
+					style="left: 361.354px; top: 208.15px; font-size: 13px; opacity: 0.334943; z-index: 4;">DJ</a><a
+					  title="" target="_blank"
+					style="left: 289.904px; top: 223.94px; font-size: 13px; opacity: 0.360281; z-index: 5;">Apple Music</a><a
+					  title=" " target="_blank"
+					style="left: 224.873px; top: 181.109px; font-size: 13px; opacity: 0.358914; z-index: 6;">European and American songs</a><a
+					  title=" " target="_blank"
+					style="left: 222.317px; top: 108.234px; font-size: 13px; opacity: 0.349561; z-index: 7;">QQ music</a><a
+					  title=" " target="_blank"
+					style="left: 269.964px; top: 46.37px; font-size: 13px; opacity: 0.352826; z-index: 8;">王心凌</a><a
+					class="button"   title="一言" target="_blank"
+					style="left: 338.352px; top: 26.0963px; font-size: 13px; opacity: 0.381034; z-index: 9;">林俊杰</a><a
+					  title=" " target="_blank"
+					style="left: 372.538px; top: 55.4346px; font-size: 14px; opacity: 0.436471; z-index: 10;">BillBoard</a><a
+					  title=" " target="_blank"
+					style="left: 412.239px; top: 119.781px; font-size: 14px; opacity: 0.511771; z-index: 11;">NetEase cloud music</a><a
+					  title="" target="_blank"
+					style="left: 418.501px; top: 190.697px; font-size: 14px; opacity: 0.590764; z-index: 12;">Memories of youth</a><a
+					  title=" " target="_blank"
+					style="left: 369.91px; top: 238.548px; font-size: 14px; opacity: 0.652961; z-index: 13;">邓紫棋</a><a
+					  title=" " target="_blank"
+					style="left: 303.003px; top: 244.028px; font-size: 15px; opacity: 0.683667; z-index: 14;">SING女团</a><a
+					  title=" " target="_blank"
+					style="left: 239.826px; top: 204.874px; font-size: 15px; opacity: 0.683665; z-index: 15;">在你的身边</a><a
+					  title=" " target="_blank"
+					style="left: 204.808px; top: 136.078px; font-size: 15px; opacity: 0.668999; z-index: 16;">是你</a><a
+					  title=" " target="_blank"
+					style="left: 222.711px; top: 63.9526px; font-size: 14px; opacity: 0.661661; z-index: 17;">Cool dog music</a><a
+					  title=" " target="_blank"
+					style="left: 272.593px; top: 16.2472px; font-size: 15px; opacity: 0.680555; z-index: 18;">Electroacoustic</a><a
+					  title=" " target="_blank"
+					style="left: 332.104px; top: 11.5993px; font-size: 15px; opacity: 0.737317; z-index: 19;">ACG</a><a
+					  title=" " target="_blank"
+					style="left: 385.593px; top: 51.9236px; font-size: 15px; opacity: 0.834165; z-index: 20;">小城夏天</a><a
+					  title=" " target="_blank"
+					style="left: 438.068px; top: 120.632px; font-size: 16px; opacity: 0.960083; z-index: 21;">LinkinPark</a><a
+					  title=" " target="_blank"
+					style="left: 408.695px; top: 188.016px; font-size: 16px; opacity: 1.08688; z-index: 22;">Under the secular aesthetic, the uncompromising queen Jolin Tsai</a><a
+					  title=" :" target="_blank"
+					style="left: 332.518px; top: 222.87px; font-size: 16px; opacity: 1.1755; z-index: 23;">BGM</a><a
+					  title="" target="_blank"
+					style="left: 271.782px; top: 206.91px; font-size: 16px; opacity: 1.20171; z-index: 24;">Electroacoustic</a><a
+					  title=" " target="_blank"
+					style="left: 215.494px; top: 146.329px; font-size: 16px; opacity: 1.18195; z-index: 25;">网易云音乐</a><a
+					  title=" " target="_blank"
+					style="left: 245.069px; top: 73.7692px; font-size: 16px; opacity: 1.16717; z-index: 26;">Waka Waka (This Time for Africa)</a><a
+					  title=" " target="_blank"
+					style="left: 297.926px; top: 35.1459px; font-size: 16px; opacity: 1.21316; z-index: 27;">The cure</a><a
+					  title=" " target="_blank"
+					style="left: 344.119px; top: 60.6813px; font-size: 17px; opacity: 1.35366; z-index: 28;">Music</a><a
+					  title=" " target="_blank"
+					style="left: 368.936px; top: 130.265px; font-size: 18px; opacity: 1.56113; z-index: 29;">Memories of youth</a><a
+					  title=" " target="_blank"
+					style="left: 327.802px; top: 163.495px; font-size: 18px; opacity: 1.69418; z-index: 30;">喜马拉雅</a><a
+					  title=" " target="_blank"
+					style="left: 277.624px; top: 104.061px; font-size: 18px; opacity: 1.67385; z-index: 31;">每日</a>
+			</div>
+		</div>	
+	</div>
+</body></html>
