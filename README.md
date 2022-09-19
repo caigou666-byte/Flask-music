@@ -14,6 +14,8 @@ pip install flask`
 - ①不引入第三方组件库，完全自己实现。
 - ②登录或注册，没输入或输入错误的账号密码会有提示。拦截SQL代码，密码采用sha256加密，数据库也不会存储明文密码。
 - ③主界面采用Ajax动态刷新技术。
+### 未来展望
+- 可能使用VUE前端与Nodejs后端对项目进行重构
 ### 根界面
 ![根界面](https://github.com/Unreal-abc/Flask-music/blob/main/%E6%A0%B9%E7%95%8C%E9%9D%A2.jpg)
 ### 登录界面
